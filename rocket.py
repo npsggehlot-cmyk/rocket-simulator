@@ -23,6 +23,7 @@ altitudes = []
 times = []
 velocities = []
 machs = []
+cds = []
 mach_table = [0.0, 0.8, 1.0, 1.5, 2.0, 3.0]
 cd_table =   [0.40, 0.45, 0.80, 0.55, 0.45, 0.40]
 
@@ -59,6 +60,7 @@ while time < burn_time:
     times.append(time)
     velocities.append(velocity)
     machs.append(mach)
+    cds.append(cd)
 
 print("Altitude at burnout:", round(altitude, 1), "m")
 print("Velocity at burnout:", round(velocity, 1), "m/s")
@@ -80,11 +82,13 @@ while altitude > 0:
     times.append(time)
     velocities.append(velocity) 
     machs.append(mach)
+    cds.append(cd)
 
 print("Altitude at landing:", round(altitude, 1), "m")
 print("Velocity at landing:", round(velocity, 1), "m/s")
 print("Peak altitude:", round(peak_altitude, 1), "m")
 print("Peak Mach:", round(max(machs), 2))
+print("Peak Drag Coefficient:", round(max(cds), 2))
 print("Area:", round(area, 3), "m²")
 
 plt.figure()
@@ -92,6 +96,14 @@ plt.plot(times, altitudes)
 plt.xlabel("Time (s)")
 plt.ylabel("Altitude (m)")
 plt.title(name + " Flight Profile")
+plt.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
+plt.grid(True)
+plt.legend()
+plt.figure()
+plt.plot(times, cds)
+plt.xlabel("Time (s)")
+plt.ylabel("Drag Coefficient")
+plt.title(name + " Drag Coefficient Profile")
 plt.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
 plt.grid(True)
 plt.legend()
