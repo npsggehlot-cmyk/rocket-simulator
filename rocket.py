@@ -1,4 +1,5 @@
 import math
+import matplotlib.pyplot as plt
 
 name = "Falcon"
 mass = 0.5
@@ -16,6 +17,8 @@ peak_altitude = 0
 cd = 0.5
 air_density = 1.225
 area = math.pi * (diameter/2) ** 2
+altitudes = []
+times = []
 
 
 print("Rocket:", name)
@@ -30,6 +33,8 @@ while time < burn_time:
     velocity = velocity + acceleration * dt
     altitude = altitude + velocity * dt
     time = time + dt
+    altitudes.append(altitude)
+    times.append(time)
 
 print("Altitude at burnout:", round(altitude, 1), "m")
 print("Velocity at burnout:", round(velocity, 1), "m/s")
@@ -42,10 +47,22 @@ while altitude > 0:
     velocity = velocity + acceleration * dt
     altitude = altitude + velocity * dt 
     time = time + dt
+    altitudes.append(altitude)
+    times.append(time)
 
 print("Altitude at landing:", round(altitude, 1), "m")
 print("Velocity at landing:", round(velocity, 1), "m/s")
 print("Peak altitude:", round(peak_altitude, 1), "m")
 print("Area:", round(area, 3), "m²")
+
+plt.plot(times, altitudes)
+plt.xlabel("Time (s)")
+plt.ylabel("Altitude (m)")
+plt.title(name + " Flight Profile")
+plt.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
+plt.grid(True)
+plt.legend()
+plt.show()
+
 
 
