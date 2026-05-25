@@ -15,4 +15,4 @@ Run locally:
 git clone [your repo]
 pip install -r requirements.txt
 streamlit run app.py
-Built by Naivedhya Gehlot — Lambert High School, rising sophomore
+Built by Naivedhya Gehlot - Lambert High School, rising sophomore
