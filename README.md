@@ -12,7 +12,7 @@ Monte Carlo simulation - 1000 flights to quantify uncertainty
 
 Live Demo: https://rocket-simulator-njpmtcd9jvuoprfyojsegh.streamlit.app/
 Run locally:
-git clone [your repo]
+git clone [[your repo]](https://github.com/npsggehlot-cmyk/rocket-simulator.git)
 pip install -r requirements.txt
 streamlit run app.py
 Built by Naivedhya Gehlot - Lambert High School, rising sophomore
