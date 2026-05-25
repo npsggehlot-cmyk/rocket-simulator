@@ -44,15 +44,23 @@ def simulate(thrust, wind_speed):
         machs.append(mach)
         cds.append(cd)
 
+    parachute_area = math.pi * (parachute_diameter/2) ** 2
+    cd_parachute = 0.75
+
     while altitude > 0:
-        if altitude > peak_altitude:
-            peak_altitude = altitude
         temperature = 288.15 -0.0065 * altitude
+        air_density = 1.225 * (temperature / 288.15) ** 5.2561
         speed_of_sound = math.sqrt(1.4 * 287.05 * temperature)
         mach = velocity / speed_of_sound
-        air_density = 1.225 * (temperature / 288.15) ** 5.2561
-        cd = np.interp(mach, mach_table, cd_table)
-        drag = 0.5 * cd * air_density * area * velocity ** 2
+        if altitude > peak_altitude:
+            peak_altitude = altitude
+        if altitude < deployment_altitude:
+            effective_cd = cd_parachute
+            effective_area = parachute_area
+        else:
+            effective_cd = np.interp(mach, mach_table, cd_table)
+            effective_area = area
+        drag = 0.5 * effective_cd * air_density * effective_area * velocity ** 2
         acceleration = (-weight - drag * math.copysign(1, velocity)) / dry_mass
         velocity = velocity + acceleration * dt
         altitude = altitude + velocity * dt 
@@ -80,6 +88,8 @@ fin_root_chord = st.sidebar.slider("Fin Root Chord (m)", min_value=0.01, max_val
 fin_tip_chord = st.sidebar.slider("Fin Tip Chord (m)", min_value=0.01, max_value=0.5, value=0.05, step=0.01)
 cg_location = st.sidebar.slider("Center of Gravity Location (m)", min_value=0.01, max_value=1.0, value=0.5, step=0.01)
 rocket_length = st.sidebar.slider("Rocket Length (m)", min_value=0.1, max_value=2.0, value=0.5, step=0.1)
+parachute_diameter = st.sidebar.slider("Parachute Diameter (m)", min_value=0.1, max_value=2.0, value=0.3, step=0.1)
+deployment_altitude = st.sidebar.slider("Parachute Deployment Altitude (m)", min_value=10.0, max_value=500.0, value=150.0, step=10.0)
 st.write(thrust, dry_mass, diameter)
 area = math.pi * (diameter/2) ** 2
 cp_nose = nose_length / 2
@@ -96,6 +106,7 @@ if st.button("Launch"):
     st.write("CP Location:", round(cp_total, 2), "m")
     st.write("CG Location:", round(cg_location, 2), "m")
     st.write("Stability Margin:", round(stability_margin, 2), "calibers")
+    st.write("Landing velocity:", round(abs(velocity), 1), "m/s")
     if stability_margin < 1:
         st.write("Stability: Unstable")
     elif stability_margin > 2:
