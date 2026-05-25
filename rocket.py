@@ -22,6 +22,7 @@ area = math.pi * (diameter/2) ** 2
 altitudes = []
 times = []
 velocities = []
+machs = []
 
 print("Rocket:", name)
 print("Dry Mass:", dry_mass, "kg")
@@ -35,6 +36,8 @@ if thrust < total_weight:
 
 while time < burn_time:
     temperature = 288.15 -0.0065 * altitude
+    speed_of_sound = math.sqrt(1.4 * 287.05 * temperature)
+    mach = velocity / speed_of_sound
     air_density = 1.225 * (temperature / 288.15) ** 5.2561
     current_mass = dry_mass + propellant_mass * (1 - time / burn_time)
     current_weight = current_mass * 9.81
@@ -52,6 +55,7 @@ while time < burn_time:
     altitudes.append(altitude)
     times.append(time)
     velocities.append(velocity)
+    machs.append(mach)
 
 print("Altitude at burnout:", round(altitude, 1), "m")
 print("Velocity at burnout:", round(velocity, 1), "m/s")
@@ -60,6 +64,8 @@ while altitude > 0:
     if altitude > peak_altitude:
         peak_altitude = altitude
     temperature = 288.15 -0.0065 * altitude
+    speed_of_sound = math.sqrt(1.4 * 287.05 * temperature)
+    mach = velocity / speed_of_sound
     air_density = 1.225 * (temperature / 288.15) ** 5.2561
     drag = 0.5 * cd * air_density * area * velocity ** 2
     acceleration = (-weight - drag * math.copysign(1, velocity)) / dry_mass
@@ -69,10 +75,12 @@ while altitude > 0:
     altitudes.append(altitude)
     times.append(time)
     velocities.append(velocity) 
+    machs.append(mach)
 
 print("Altitude at landing:", round(altitude, 1), "m")
 print("Velocity at landing:", round(velocity, 1), "m/s")
 print("Peak altitude:", round(peak_altitude, 1), "m")
+print("Peak Mach:", round(max(machs), 2))
 print("Area:", round(area, 3), "m²")
 
 plt.figure()
@@ -91,7 +99,15 @@ plt.title(name + " Velocity Profile")
 plt.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
 plt.grid(True)
 plt.legend()
-
+plt.figure()
+plt.plot(times, machs)
+plt.xlabel("Time (s)")
+plt.ylabel("Mach Number")
+plt.title(name + " Mach Profile")
+plt.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
+plt.axhline(y=1, color='g', linestyle='--', label='Mach 1')
+plt.grid(True)
+plt.legend()
 plt.show()
 
 
