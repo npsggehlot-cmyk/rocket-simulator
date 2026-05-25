@@ -2,13 +2,16 @@ import math
 import matplotlib.pyplot as plt
 
 name = input("Enter rocket name: ")
-mass = float(input("Enter mass of the rocket (kg): "))
+dry_mass = float(input("Enter mass of the rocket (kg): "))
 diameter = float(input("Enter diameter of the rocket (m): "))
 thrust = float(input("Enter thrust of the rocket (N): "))
 burn_time = float(input("Enter burn time of the rocket (s): "))
-weight = mass * 9.81
-net_force = thrust - weight
-acceleration = net_force / mass
+propellant_mass = float(input("Enter propellant mass of the rocket (kg): "))
+weight = dry_mass * 9.81
+total_mass = dry_mass + propellant_mass
+total_weight = (dry_mass + propellant_mass) * 9.81
+net_force = thrust - total_weight
+acceleration = net_force / total_mass
 dt = 0.01
 velocity = 0
 altitude = 0
@@ -20,20 +23,21 @@ area = math.pi * (diameter/2) ** 2
 altitudes = []
 times = []
 
-
 print("Rocket:", name)
-print("Mass:", mass, "kg")
+print("Dry Mass:", dry_mass, "kg")
 print("Diameter:", diameter, "m")
 print("Net Force:", round(net_force, 1), "N")
 print("Acceleration:", round(acceleration, 1), "m/s²")
 
-if thrust < weight:
+if thrust < total_weight:
     print("Warning: Thrust is less than weight. The rocket will not lift off.")
     quit()
 
 while time < burn_time:
+    current_mass = dry_mass + propellant_mass * (1 - time / burn_time)
+    current_weight = current_mass * 9.81
     drag = 0.5 * cd * air_density * area * velocity ** 2
-    acceleration = (thrust - drag - weight) / mass
+    acceleration = (thrust - drag - current_weight) / current_mass
     velocity = velocity + acceleration * dt
     altitude = altitude + velocity * dt
     time = time + dt
@@ -47,7 +51,7 @@ while altitude > 0:
     if altitude > peak_altitude:
         peak_altitude = altitude
     drag = 0.5 * cd * air_density * area * velocity ** 2
-    acceleration = (-weight - drag * math.copysign(1, velocity)) / mass
+    acceleration = (-weight - drag * math.copysign(1, velocity)) / dry_mass
     velocity = velocity + acceleration * dt
     altitude = altitude + velocity * dt 
     time = time + dt
