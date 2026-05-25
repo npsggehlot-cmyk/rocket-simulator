@@ -2,7 +2,7 @@ import math
 import matplotlib.pyplot as plt
 
 name = input("Enter rocket name: ")
-dry_mass = float(input("Enter mass of the rocket (kg): "))
+dry_mass = float(input("Enter drymass of the rocket (kg): "))
 diameter = float(input("Enter diameter of the rocket (m): "))
 thrust = float(input("Enter thrust of the rocket (N): "))
 burn_time = float(input("Enter burn time of the rocket (s): "))
@@ -21,6 +21,7 @@ cd = 0.5
 area = math.pi * (diameter/2) ** 2
 altitudes = []
 times = []
+velocities = []
 
 print("Rocket:", name)
 print("Dry Mass:", dry_mass, "kg")
@@ -37,13 +38,20 @@ while time < burn_time:
     air_density = 1.225 * (temperature / 288.15) ** 5.2561
     current_mass = dry_mass + propellant_mass * (1 - time / burn_time)
     current_weight = current_mass * 9.81
-    drag = 0.5 * cd * air_density * area * velocity ** 2
-    acceleration = (thrust - drag - current_weight) / current_mass
-    velocity = velocity + acceleration * dt
+    k1_drag = 0.5 * cd * air_density * area * velocity ** 2
+    k1 = (thrust - k1_drag - current_weight) / current_mass
+    k2_drag = 0.5 * cd * air_density * area * (velocity + dt/2 * k1) ** 2
+    k2 = (thrust - k2_drag - current_weight) / current_mass
+    k3_drag = 0.5 * cd * air_density * area * (velocity + dt/2 * k2) ** 2
+    k3 = (thrust - k3_drag - current_weight) / current_mass
+    k4_drag = 0.5 * cd * air_density * area * (velocity + dt * k3) ** 2
+    k4 = (thrust - k4_drag - current_weight) / current_mass  
+    velocity = velocity + (dt/6) * (k1 + 2*k2 + 2*k3 + k4)
     altitude = altitude + velocity * dt
     time = time + dt
     altitudes.append(altitude)
     times.append(time)
+    velocities.append(velocity)
 
 print("Altitude at burnout:", round(altitude, 1), "m")
 print("Velocity at burnout:", round(velocity, 1), "m/s")
@@ -60,6 +68,7 @@ while altitude > 0:
     time = time + dt
     altitudes.append(altitude)
     times.append(time)
+    velocities.append(velocity) 
 
 print("Altitude at landing:", round(altitude, 1), "m")
 print("Velocity at landing:", round(velocity, 1), "m/s")
@@ -74,6 +83,5 @@ plt.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
 plt.grid(True)
 plt.legend()
 plt.show()
-
 
 
