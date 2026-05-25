@@ -18,7 +18,6 @@ altitude = 0
 time = 0
 peak_altitude = 0
 cd = 0.5
-air_density = 1.225
 area = math.pi * (diameter/2) ** 2
 altitudes = []
 times = []
@@ -34,6 +33,8 @@ if thrust < total_weight:
     quit()
 
 while time < burn_time:
+    temperature = 288.15 -0.0065 * altitude
+    air_density = 1.225 * (temperature / 288.15) ** 5.2561
     current_mass = dry_mass + propellant_mass * (1 - time / burn_time)
     current_weight = current_mass * 9.81
     drag = 0.5 * cd * air_density * area * velocity ** 2
@@ -50,6 +51,8 @@ print("Velocity at burnout:", round(velocity, 1), "m/s")
 while altitude > 0:
     if altitude > peak_altitude:
         peak_altitude = altitude
+    temperature = 288.15 -0.0065 * altitude
+    air_density = 1.225 * (temperature / 288.15) ** 5.2561
     drag = 0.5 * cd * air_density * area * velocity ** 2
     acceleration = (-weight - drag * math.copysign(1, velocity)) / dry_mass
     velocity = velocity + acceleration * dt
