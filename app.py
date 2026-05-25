@@ -118,22 +118,34 @@ if st.button("Launch"):
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Altitude (m)")
     ax.set_title(name + " Flight Profile")
+    ax.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
+    ax.legend()
     ax.grid(True)
     st.pyplot(fig)
+    with st.expander("What does this mean?"):
+        st.write("This graph shows the altitude of the rocket over time. The rocket will ascend during the burn phase and then descend after burnout. The peak of the curve represents the maximum altitude reached by the rocket.")
     fig, ax = plt.subplots()
     ax.plot(times, velocities)
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Velocity (m/s)")
     ax.set_title(name + " Velocity Profile")
+    ax.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')   
+    ax.legend()
     ax.grid(True)
     st.pyplot(fig)
+    with st.expander("What does this mean?"):
+        st.write("This graph shows the velocity of the rocket over time. The rocket will accelerate during the burn phase and then decelerate after burnout. The velocity will become negative during descent, indicating downward motion.")
     fig, ax = plt.subplots()
     ax.plot(times, machs)
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Mach Number")
     ax.set_title(name + " Mach Profile")
+    ax.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
+    ax.legend()
     ax.grid(True)
     st.pyplot(fig)
+    with st.expander("What does this mean?"):
+        st.write("This graph shows the Mach number of the rocket over time. The Mach number is the ratio of the rocket's velocity to the speed of sound in the surrounding air.")
     with st.spinner("Running 1000 simulations..."):
         monte_carlo_results = []
         for i in range(1000):
@@ -144,6 +156,10 @@ if st.button("Launch"):
     ax.hist(monte_carlo_results, bins=30)
     ax.set_xlabel("Peak Altitude (m)")
     ax.set_ylabel("Frequency")
+    ax.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
+    ax.legend()
     ax.set_title(name + " Monte Carlo Peak Altitude Distribution")
     st.pyplot(fig)
+    with st.expander("What does this mean?"):
+        st.write("This histogram shows the distribution of peak altitudes from 1000 simulations where the thrust was varied randomly by 5%. This gives an idea of the variability in performance due to uncertainties in thrust.")
 
