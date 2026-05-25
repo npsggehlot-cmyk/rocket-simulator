@@ -1,11 +1,11 @@
 import math
 import matplotlib.pyplot as plt
 
-name = "Falcon"
-mass = 0.5
-diameter = 0.05
-thrust = 20
-burn_time = 1.5
+name = input("Enter rocket name: ")
+mass = float(input("Enter mass of the rocket (kg): "))
+diameter = float(input("Enter diameter of the rocket (m): "))
+thrust = float(input("Enter thrust of the rocket (N): "))
+burn_time = float(input("Enter burn time of the rocket (s): "))
 weight = mass * 9.81
 net_force = thrust - weight
 acceleration = net_force / mass
@@ -26,6 +26,10 @@ print("Mass:", mass, "kg")
 print("Diameter:", diameter, "m")
 print("Net Force:", round(net_force, 1), "N")
 print("Acceleration:", round(acceleration, 1), "m/s²")
+
+if thrust < weight:
+    print("Warning: Thrust is less than weight. The rocket will not lift off.")
+    quit()
 
 while time < burn_time:
     drag = 0.5 * cd * air_density * area * velocity ** 2
