@@ -75,6 +75,7 @@ print("Velocity at landing:", round(velocity, 1), "m/s")
 print("Peak altitude:", round(peak_altitude, 1), "m")
 print("Area:", round(area, 3), "m²")
 
+plt.figure()
 plt.plot(times, altitudes)
 plt.xlabel("Time (s)")
 plt.ylabel("Altitude (m)")
@@ -82,6 +83,15 @@ plt.title(name + " Flight Profile")
 plt.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
 plt.grid(True)
 plt.legend()
+plt.figure()
+plt.plot(times, velocities)
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m/s)")
+plt.title(name + " Velocity Profile")
+plt.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
+plt.grid(True)
+plt.legend()
+
 plt.show()
 
 
