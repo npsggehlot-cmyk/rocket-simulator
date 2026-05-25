@@ -116,6 +116,13 @@ print("CP Location:", round(cp_total, 3), "m from nose")
 print("CG Location:", round(cg_location, 3), "m from nose")
 print("Stability Margin:", round(stability_margin, 3), "calibers")
 
+monte_carlo_results = []
+for i in range(1000):
+    varied_thrust = random.gauss(thrust, thrust * 0.05)
+    result = simulate(varied_thrust, 0)
+    monte_carlo_results.append(result[0])
+
+
 plt.figure()
 plt.plot(times, altitudes)
 plt.xlabel("Time (s)")
@@ -149,6 +156,12 @@ plt.axvline(x=burn_time, color='r', linestyle='--', label='Burnout')
 plt.axhline(y=1, color='g', linestyle='--', label='Mach 1')
 plt.grid(True)
 plt.legend()
+plt.figure()
+plt.hist(monte_carlo_results, bins=30, color='steelblue', edgecolor='black')
+plt.xlabel("Peak Altitude (m)")
+plt.ylabel("Number of Simulations")
+plt.title(name + " Monte Carlo - 1000 Flights")
+plt.axvline(x=sum(monte_carlo_results)/len(monte_carlo_results), color='r', linestyle='--', label='Mean')
+plt.grid(True)
+plt.legend()
 plt.show()
-
-
