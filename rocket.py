@@ -1,5 +1,6 @@
 import math
 import matplotlib.pyplot as plt
+import numpy as np
 
 name = input("Enter rocket name: ")
 dry_mass = float(input("Enter drymass of the rocket (kg): "))
@@ -17,12 +18,13 @@ velocity = 0
 altitude = 0
 time = 0
 peak_altitude = 0
-cd = 0.5
 area = math.pi * (diameter/2) ** 2
 altitudes = []
 times = []
 velocities = []
 machs = []
+mach_table = [0.0, 0.8, 1.0, 1.5, 2.0, 3.0]
+cd_table =   [0.40, 0.45, 0.80, 0.55, 0.45, 0.40]
 
 print("Rocket:", name)
 print("Dry Mass:", dry_mass, "kg")
@@ -41,6 +43,7 @@ while time < burn_time:
     air_density = 1.225 * (temperature / 288.15) ** 5.2561
     current_mass = dry_mass + propellant_mass * (1 - time / burn_time)
     current_weight = current_mass * 9.81
+    cd = np.interp(mach, mach_table, cd_table)
     k1_drag = 0.5 * cd * air_density * area * velocity ** 2
     k1 = (thrust - k1_drag - current_weight) / current_mass
     k2_drag = 0.5 * cd * air_density * area * (velocity + dt/2 * k1) ** 2
@@ -67,6 +70,7 @@ while altitude > 0:
     speed_of_sound = math.sqrt(1.4 * 287.05 * temperature)
     mach = velocity / speed_of_sound
     air_density = 1.225 * (temperature / 288.15) ** 5.2561
+    cd = np.interp(mach, mach_table, cd_table)
     drag = 0.5 * cd * air_density * area * velocity ** 2
     acceleration = (-weight - drag * math.copysign(1, velocity)) / dry_mass
     velocity = velocity + acceleration * dt
