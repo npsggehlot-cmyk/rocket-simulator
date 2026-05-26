@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="parts.js"></script>
+    <title>Rocket Builder</title>
+</head>
+<body>
+    <canvas id="rocketCanvas" width="400" height="400"></canvas>
+    <div id="partsCatalog"></div>
+    <h1>Rocket Builder</h1>
+    <p>Build your own rocket below</p>
+    <input id="nameInput" placeholder="Rocket Name" />
+    <input id="thrustInput" placeholder="Thrust (N)" type="number" />
+    <button onclick="launch()">Launch</button>
+    <p id="result">No rocket built yet.</p>
+    <script>
+        function launch(){
+            const rocketName = document.getElementById("nameInput").value || "Unnamed Rocket";
+            const thrust = parseFloat(document.getElementById("thrustInput").value) || 0;
+            document.getElementById("result").innerText = `${rocketName}: thrust ${thrust}N, Rocket launched!`;
+        }
+    </script>
+    <script>        
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("rocketCanvas") });
+        renderer.setSize(400, 400);
+        camera.position.z = 5;
+        const geometry = new THREE.CylinderGeometry(0.3, 0.3, 2, 16);
+        const material = new THREE.MeshBasicMaterial({ color: 0x378ADD });
+        const body = new THREE.Mesh(geometry, material);
+        scene.add(body);
+        const noseGeometry = new THREE.ConeGeometry(0.3, 0.8, 16);
+        const noseMaterial = new THREE.MeshBasicMaterial({ color: 0x185FA5 });
+        const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+        nose.position.y = 1.4;
+        scene.add(nose);
+        const engineGeometry = new THREE.CylinderGeometry(0.2, 0.3, 0.4, 16);
+        const engineMaterial = new THREE.MeshBasicMaterial({ color: 0x0C447C });
+        const engine = new THREE.Mesh(engineGeometry, engineMaterial);
+        engine.position.y = -1.2;
+        scene.add(engine);
+        renderer.render(scene, camera);
+    </script>
+    <script>
+        function addPart(partName) {
+            document.getElementById("result").innerText = partName + " added to rocket!";
+        }
+        function displayParts() {
+            parts.forEach(function(part) {
+                const card = document.createElement("div");
+                card.style.border = "1px solid gray";
+                card.style.padding = "10px";
+                card.style.margin = "10px";
+                card.style.borderRadius = "8px";
+                card.innerHTML = `
+                    <h3>${part.name}</h3>
+                    <p>${part.description}</p>
+                    <p>$${part.price}</p>
+                    <a href="${part.link}" target="_blank">Buy on Estes</a>
+                    <button onclick="addPart('${part.name}')">Add to rocket</button>
+                `;
+                document.getElementById("partsCatalog").appendChild(card);
+            });
+        }
+        displayParts();
+    </script>
+
+</body>
+</html>
